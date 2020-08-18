@@ -5,6 +5,7 @@ import cv2
 from pytesseract import image_to_string
 
 
+
 class TableData:
     def __init__(self):
         self.balance1 = -1
@@ -28,9 +29,11 @@ class Parser:
         result = cv2.matchTemplate(checker_image, full_screen, search_method)
         _, _, mnLoc, _ = cv2.minMaxLoc(result)
         table_x, table_y = mnLoc
-        print("table x,y", table_x, table_y)
+        print("table x,y =", table_x, table_y)
 
         real_table = full_screen[table_y:table_y + self.table_height, table_x:table_x + self.table_width]
+        real_table = ~real_table
+
         ### FOR TEST
         cv2.imwrite('real_table.png', real_table)
         ###
@@ -38,7 +41,7 @@ class Parser:
         self.get_parts(real_table)
 
     def get_parts(self, real_table):
-        self.tableData.balance1 = self.get_part(real_table, 695, 725, 645, 790)
+        self.tableData.balance1 = self.get_part(real_table, 695, 725, 650, 790)
 
     def get_part(self, real_table, x0, x1, y0, y1):
         value = real_table[x0:x1, y0:y1]
@@ -46,11 +49,15 @@ class Parser:
         cv2.imwrite('tmp.png', value)
         ###
         text = image_to_string(value)
-        text = text.strip()
+        text = text.strip().replace(".","").replace(",","")
         if text != "":
             print(text)
             if text.isdigit():
                 return int(text)
+            if text.join("All-in"):
+                return -3
+            if text.join("Sitting Out"):
+                return -2
             print("WARNING")
             return -1
         print("ERROR")
