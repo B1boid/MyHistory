@@ -6,9 +6,10 @@ from pytesseract import image_to_string
 
 
 class TableData:
-    balance1 = -1
-    balance2 = -1
-    balance3 = -1
+    def __init__(self):
+        self.balance1 = -1
+        self.balance2 = -1
+        self.balance3 = -1
 
 
 class Parser:
