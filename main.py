@@ -54,9 +54,9 @@ class Parser:
             print(text)
             if text.isdigit():
                 return int(text)
-            if text.join("All-in"):
+            if text.find("All-in") > -1:
                 return -3
-            if text.join("Sitting Out"):
+            if text.find("Sitting Out") > -1:
                 return -2
             print("WARNING")
             return -1
