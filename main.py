@@ -40,11 +40,11 @@ class Parser:
         self.tableData.balance1 = self.get_part(real_table, 695, 725, 645, 790)
 
     def get_part(self, real_table, x0, x1, y0, y1):
-        balance1 = real_table[x0:x1, y0:y1]
+        value = real_table[x0:x1, y0:y1]
         ### FOR TEST
-        cv2.imwrite('tmp.png', balance1)
+        cv2.imwrite('tmp.png', value)
         ###
-        text = image_to_string(balance1)
+        text = image_to_string(value)
         text = text.strip()
         if text != "":
             print(text)
