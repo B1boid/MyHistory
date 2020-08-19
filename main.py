@@ -21,17 +21,17 @@ class TableData:
 
 
 class Parser:
-    cf = 2.005
+    cf = 1
     table_width = int(1380 / cf)
     table_height = int(950 / cf)
 
     def __init__(self):
         self.tableData = TableData()
-        pytesseract.tesseract_cmd = 'C:\Program Files\Tesseract-OCR\\tesseract.exe'
+        #pytesseract.tesseract_cmd = 'C:\Program Files\Tesseract-OCR\\tesseract.exe'
 
     def get_data(self):
         search_method = cv2.TM_SQDIFF_NORMED
-        checker_image = cv2.imread('star_PS.png')
+        checker_image = cv2.imread('starMac_PS.png')
         full_screen = pyautogui.screenshot()
         full_screen = cv2.cvtColor(np.array(full_screen), cv2.COLOR_RGB2BGR)
 
@@ -47,9 +47,69 @@ class Parser:
         cv2.imwrite('real_table.png', real_table)
         ###
 
-        self.get_parts(real_table)
+        self.get_parts_ya(real_table)
 
-    def get_parts(self, real_table):
+
+    def get_parts_ya(self,real_table):
+        self.tableData.player1.balance = self.get_part(real_table,
+                                                       int(695 / self.cf),
+                                                       int(725 / self.cf),
+                                                       int(650 / self.cf),
+                                                       int(790 / self.cf))
+        self.tableData.player2.balance = self.get_part(real_table,
+                                                       int(225 / self.cf),
+                                                       int(260 / self.cf),
+                                                       int(105 / self.cf),
+                                                       int(250 / self.cf))
+        self.tableData.player3.balance = self.get_part(real_table,
+                                                       int(225 / self.cf),
+                                                       int(260 / self.cf),
+                                                       int(1125 / self.cf),
+                                                       int(1270 / self.cf))
+
+        firstCardHand = self.get_part(real_table,
+                                      int(570 / self.cf),  # y0
+                                      int(655 / self.cf),  # y1
+                                      int(575 / self.cf),  # x0
+                                      int(640 / self.cf))  # x1
+
+        secondCardHand = self.get_part(real_table,
+                                       int(570 / self.cf),
+                                       int(655 / self.cf),
+                                       int(660 / self.cf),
+                                       int(720 / self.cf))
+
+        flop1 = self.get_part(real_table,
+                              int(300 / self.cf),
+                              int(400 / self.cf),
+                              int(425 / self.cf),
+                              int(500 / self.cf))
+
+        flop2 = self.get_part(real_table,
+                              int(300 / self.cf),
+                              int(400 / self.cf),
+                              int(520 / self.cf),
+                              int(600 / self.cf))
+
+        flop3 = self.get_part(real_table,
+                              int(300 / self.cf),
+                              int(400 / self.cf),
+                              int(615 / self.cf),
+                              int(700 / self.cf))
+
+        tern = self.get_part(real_table,
+                             int(300 / self.cf),
+                             int(400 / self.cf),
+                             int(710 / self.cf),
+                             int(790 / self.cf))
+
+        river = self.get_part(real_table,
+                              int(300 / self.cf),
+                              int(400 / self.cf),
+                              int(805 / self.cf),
+                              int(880 / self.cf))
+
+    def get_parts_oleg(self, real_table):
         self.tableData.player1.balance = self.get_part(real_table,
                                                        int(695 / self.cf),
                                                        int(725 / self.cf),
@@ -117,9 +177,9 @@ class Parser:
             print(text)
             if text.isdigit():
                 return int(text)
-            if text.find("All-in") > -1 or text.find("AlHn"):
+            if text.find("All-in") > -1 or text.find("AlHn") > -1 or text.find("Aln") > -1:
                 return -3
-            if text.find("Sitting Out") > -1:
+            if text.find("Sitting Out") > -1 or text.find("Sittinut") > -1 or text.find("Sittinu") > -1:
                 return -2
             print("WARNING")
             return -1
