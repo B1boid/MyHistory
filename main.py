@@ -2,7 +2,7 @@ import numpy as np
 import pyautogui
 import cv2
 
-from pytesseract import image_to_string
+import pytesseract
 
 
 class TableData:
@@ -13,15 +13,18 @@ class TableData:
 
 
 class Parser:
-    table_width = 1380
-    table_height = 950
+    cf = 2.005
+    table_width = int(1380 / cf)
+    table_height = int(950 / cf)
+
 
     def __init__(self):
         self.tableData = TableData()
 
     def get_data(self):
         search_method = cv2.TM_SQDIFF_NORMED
-        checker_image = cv2.imread('checker_PS.png')
+        #checker_image = cv2.imread('checker_PS.png')
+        checker_image = cv2.imread('star_PS.png')
         full_screen = pyautogui.screenshot()
         full_screen = cv2.cvtColor(np.array(full_screen), cv2.COLOR_RGB2BGR)
 
@@ -38,14 +41,16 @@ class Parser:
         self.get_parts(real_table)
 
     def get_parts(self, real_table):
-        self.tableData.balance1 = self.get_part(real_table, 695, 725, 645, 790)
+        self.tableData.balance1 = self.get_part(real_table, int(695 / self.cf), int(725 / self.cf), int(645 / self.cf), int(790 / self.cf))
 
     def get_part(self, real_table, x0, x1, y0, y1):
+        pytesseract.pytesseract.tesseract_cmd = 'C:\Program Files\Tesseract-OCR\\tesseract.exe'
         value = real_table[x0:x1, y0:y1]
         ### FOR TEST
         cv2.imwrite('tmp.png', value)
+        cv2.dilate(value,(1000, 1000), value)
         ###
-        text = image_to_string(value)
+        text = pytesseract.image_to_string(value)
         text = text.strip()
         if text != "":
             print(text)
